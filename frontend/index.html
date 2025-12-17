@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Particle System</title>
+    <style>
+        body { margin: 0; overflow: hidden; background: #000; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; }
+        #video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        #ui-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; 
+            pointer-events: none; color: #00FFC0; font-family: monospace; padding: 10px;
+        }
+        .ui-item { pointer-events: auto; background: rgba(0, 0, 0, 0.5); padding: 5px; margin-bottom: 5px; border-radius: 3px; }
+        #recording-indicator { background: red; width: 15px; height: 15px; border-radius: 50%; display: none; margin-right: 5px; }
+        #fps-meter { position: absolute; bottom: 10px; right: 10px; }
+
+        /* Consent UI */
+        #consent-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9);
+            display: flex; justify-content: center; align-items: center; z-index: 100;
+            color: #fff; text-align: center;
+        }
+        #consent-modal button { padding: 10px 20px; margin: 10px; cursor: pointer; }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.12.0/dist/tf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.module.min.js"
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="consent-modal">
+        <div>
+            <h2>Camera & Recording Consent</h2>
+            <p>This application requires camera access for hand tracking and will **automatically record** your session (video and particles) for Telegram upload.</p>
+            <label><input type="checkbox" id="telegram-save-toggle" checked> Save session to Telegram (ON by default)</label>
+            <p style="color: yellow;">*Recording will start immediately upon consent.*</p>
+            <button id="consent-button">I Understand & Grant Access</button>
+        </div>
+    </div>
+
+    <video id="video-background" autoplay muted playsinline></video>
+    
+    <div id="canvas-container"></div>
+
+    <div id="ui-overlay">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div style="display: flex; align-items: center;">
+                <span id="recording-indicator" class="ui-item" style="display: flex;"></span>
+                <span id="recording-status" class="ui-item">Recording: Waiting...</span>
+            </div>
+            <select id="particle-mode-selector" class="ui-item">
+                <option value="heart">Heart Shape</option>
+                <option value="spiral">Spiral Pattern</option>
+                <option value="ring">Saturn Ring</option>
+                <option value="fireworks">Fireworks Burst</option>
+            </select>
+        </div>
+        <div id="fps-meter" class="ui-item">FPS: 0</div>
+    </div>
+
+    <script src="main.js" type="module"></script>
+</body>
+</html>
